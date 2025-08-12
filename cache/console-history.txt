@@ -65,4 +65,18 @@ await usdt.connect(deployer).transfer(
 const usdt = await ethers.getContract
 const USDT_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
 console
-console.log('deployer:', deployer.address)
+console.log('deployer:', deployer.address);
+const [deployer, , , account3] = signers;
+console.log(signers.map(s => s.address));
+const signers = await ethers.getSigners();
+console.log('deployer:', deployer.address);
+// 4. Confirm you got them
+// 3. Pull oconst [deployer, , , account3] = signers;
+le.log(signers.map(s => s.address));
+conso
+// 2. Print their addresses
+const signers = await ethers
+// 1. Grab all signers
+const [deployer, , , account3] = signers
+console.
+const signers = await ethers.getSigners()
