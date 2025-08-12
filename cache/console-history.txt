@@ -1,0 +1,68 @@
+  ethers.);
+  account3.address,
+await usdt.transfer(
+await usdt.transfer(account3.address, ethers.utils.parseUnits('1000', 6));
+const usdt = await ethers.getContractAt('MockUSDT', MOCK_USDT_ADDRESS, deployer);
+const MOCK_USDT_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+console.log('account3:', account3.address);
+console.log('deployer:', deployer.address);
+const account3 = signers[3];
+const deployer = signers[0];
+const signers = await ethers.getSigners();
+.exit
+const dconst account3 = signers[3];
+const signers = await ethers.getSigners();
+const dconst account3 = signers[3];
+const signers = await ethers.getSigners();
+const dconst account3 = signers[3];
+const signers = await ethers.getSigners();
+.exit
+npx hardhat console --network localhost
+);
+  ethers.utils.parseUnits('1000', 6)
+  account3.address,
+await usdt.transfer(
+// 2) Transfer in one expression:
+);
+  deployer
+  USDT_ADDRESS,
+  'MockUSDT',
+usdt = await ethers.getContractAt(
+// 1) Re-attach without redeclaring:
+  ethers.);
+  account3.address,
+await usdt.transfer(
+const usdt = await ethers.getContractAt('MockUSDT', USDT_ADDRESS, deployer);
+const USDT_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+console
+console.log('deployer:', deployer.address);
+const account3 = signers[3];
+const deployer = signers[0];
+console.log((await usdt.balanceOf(account3.address)).toString());
+);
+  ethers.utils.parseUnits('1000', 6)
+  account3.address,
+await usdt.connect(deployer).transfer(
+const usdt = await ethers.getContractAt('MockUSDT', USDT_ADDRESS);
+const [const USDT_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+const signers = await ethers.getSigners();
+.exit
+);
+  ethers.utils.parseUnits('1000', 6)
+  account3.address,
+await usdt.connect(deployer).transfer(
+const usdt = await ethers.getContract
+const USDT_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+const [
+const signers = await ethers.getSigners();
+);
+  ethers.utils.parseUnits('1000', 6)
+  account3.address,
+await usdt.connect(deployer).transfer(
+);
+  account3.  ethers.utils.parseUnits('1000', 6)
+await usdt.connect(deployer).transfer(
+const usdt = await ethers.getContract
+const USDT_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+console
+console.log('deployer:', deployer.address)

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>GameToken DApp</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    input, button { margin: 5px; }
+    #events { border: 1px solid #ccc; padding: 10px; height: 200px; overflow-y: scroll; }
+    #leaderboard { border: 1px solid #ccc; padding: 10px; height: 200px; overflow-y: scroll; }
+  </style>
+</head>
+<body>
+  <h1>GameToken DApp</h1>
+  <button id="connect">Connect Wallet</button>
+  <p>Address: <span id="address"></span></p>
+  <p>GT Balance: <span id="balance"></span></p>
+
+  <h2>Buy GT with USDT</h2>
+  <input id="usdtAmount" placeholder="USDT amount" />
+  <button id="buy">Buy</button>
+
+  <h2>Create/Stake Match</h2>
+  <input id="matchId" placeholder="Match ID" />
+  <input id="p1" placeholder="Player 1 address" />
+  <input id="p2" placeholder="Player 2 address" />
+  <input id="stake" placeholder="Stake (GT)" />
+  <button id="createMatch">Create Match</button>
+  <button id="stakeBtn">Stake</button>
+
+  <h2>Submit Result</h2>
+  <input id="resultMatchId" placeholder="Match ID" />
+  <input id="winner" placeholder="Winner address" />
+  <button id="submitResult">Submit Result</button>
+
+  <h2>Event Logs</h2>
+  <div id="events"></div>
+  <h2>Leaderboard</h2>
+  <div id="leaderboard"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.6.9/dist/ethers.umd.min.js" type="application/javascript"></script>
+  <script>
+    // Config - replace with your deployed contract addresses
+    // Addresses from local deployment
+    const MOCK_USDT_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';  // MockUSDT
+    const TOKEN_STORE_ADDRESS = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0'; // TokenStore
+    const GAME_TOKEN_ADDRESS = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'; // GameToken
+    const PLAY_GAME_ADDRESS = '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9'; // PlayGame
+    // USDT (MockUSDT) address for approval
+    const USDT_ADDRESS = MOCK_USDT_ADDRESS;
+
+    let provider, signer;
+
+    const tokenStoreAbi = [
+      "function buy(uint256) external",
+      "event Purchase(address indexed buyer, uint256 usdtAmount, uint256 gtOut)"
+    ];
+    const usdtAbi = ["function approve(address,uint256) external returns (bool)"];
+
+    const gameTokenAbi = [
+      "function balanceOf(address) view returns (uint256)",
+      "event Minted(address indexed to, uint256 amount)"
+    ];
+    const playGameAbi = [
+      "function createMatch(bytes32,address,address,uint256) external",
+      "function stake(bytes32) external",
+      "function commitResult(bytes32,address) external",
+      "event MatchCreated(bytes32 indexed matchId, address indexed p1, address indexed p2, uint256 stake)",
+      "event Staked(bytes32 indexed matchId, address indexed player)",
+      "event Settled(bytes32 indexed matchId, address indexed winner, uint256 amount)",
+      "event Refunded(bytes32 indexed matchId)"
+    ];
+
+    let tokenStore, gameToken, playGame;
+    let players = new Set();
+
+    async function connect() {
+      if (!window.ethereum) return alert("Install MetaMask");
+      provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      signer = provider.getSigner();
+      document.getElementById("address").textContent = await signer.getAddress();
+      // instantiate contracts
+      tokenStore = new ethers.Contract(TOKEN_STORE_ADDRESS, tokenStoreAbi, signer);
+      gameToken = new ethers.Contract(GAME_TOKEN_ADDRESS, gameTokenAbi, signer);
+      playGame = new ethers.Contract(PLAY_GAME_ADDRESS, playGameAbi, signer);
+      updateBalance();
+      subscribeEvents();
+      updateLeaderboard();
+    }
+
+    async function updateBalance() {
+      const address = await signer.getAddress();
+      const balance = await gameToken.balanceOf(address);
+      document.getElementById("balance").textContent = ethers.formatUnits(balance, 18);
+    }
+
+    async function buyGT() {
+      const amount = document.getElementById("usdtAmount").value;
+      const usdtAmount = ethers.utils.parseUnits(amount, 6);
+      // Approve TokenStore to spend USDT
+      const usdtContract = new ethers.Contract(USDT_ADDRESS, usdtAbi, signer);
+      await (await usdtContract.approve(TOKEN_STORE_ADDRESS, usdtAmount)).wait();
+      // Buy GT directly from TokenStore
+      const storeContract = new ethers.Contract(TOKEN_STORE_ADDRESS, tokenStoreAbi, signer);
+      const tx = await storeContract.buy(usdtAmount);
+      await tx.wait();
+      alert("Purchased GT tx: " + tx.hash);
+      updateBalance();
+    }
+
+    async function createMatch() {
+      const matchId = document.getElementById("matchId").value;
+      const p1 = document.getElementById("p1").value;
+      const p2 = document.getElementById("p2").value;
+      const stake = document.getElementById("stake").value;
+      fetch(`http://localhost:3000/match/start`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ matchId, p1, p2, stake })
+      })
+      .then(res => res.json())
+      .then(data => alert("Created: " + data.txHash));
+    }
+
+    async function stakeMatch() {
+      const id = document.getElementById("matchId").value;
+      const hash = ethers.id(id);
+      const tx = await playGame.stake(hash);
+      await tx.wait();
+      alert("Staked tx: " + tx.hash);
+    }
+
+    async function submitResult() {
+      const id = document.getElementById("resultMatchId").value;
+      const winner = document.getElementById("winner").value;
+      fetch(`http://localhost:3000/match/result`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ matchId: id, winner })
+      })
+      .then(res => res.json())
+      .then(data => alert("Result tx: " + data.txHash));
+    }
+
+    async function updateLeaderboard() {
+      const lb = document.getElementById("leaderboard");
+      lb.innerHTML = '';
+      const addrs = Array.from(players);
+      const scores = await Promise.all(
+        addrs.map(async addr => {
+          const bal = await gameToken.balanceOf(addr);
+          return { addr, bal: parseFloat(ethers.formatUnits(bal, 18)) };
+        })
+      );
+      scores.sort((a, b) => b.bal - a.bal);
+      scores.forEach(({ addr, bal }) => {
+        const div = document.createElement('div');
+        div.textContent = `${addr}: ${bal} GT`;
+        lb.append(div);
+      });
+    }
+
+    function subscribeEvents() {
+      tokenStore.on("Purchase", (buyer, usdtAmount, gtOut) => {
+        logEvent(`Purchase: ${buyer} bought ${ethers.formatUnits(gtOut,18)} GT`);
+        updateBalance();
+        players.add(buyer);
+        updateLeaderboard();
+      });
+      playGame.on("MatchCreated", (id,p1,p2,stake) => logEvent(`MatchCreated: ${id}`));
+      playGame.on("Staked", (id,player) => logEvent(`Staked: ${id} by ${player}`));
+      playGame.on("Settled", (id,winner,amt) => {
+        logEvent(`Settled: ${id}, winner ${winner} got ${ethers.formatUnits(amt,18)} GT`);
+        updateBalance();
+        players.add(winner);
+        updateLeaderboard();
+      });
+      playGame.on("Refunded", (id) => {
+        logEvent(`Refunded: ${id}`);
+        updateBalance();
+      });
+    }
+
+    function logEvent(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      document.getElementById("events").prepend(div);
+    }
+
+    document.getElementById("connect").onclick = connect;
+    document.getElementById("buy").onclick = buyGT;
+    document.getElementById("createMatch").onclick = createMatch;
+    document.getElementById("stakeBtn").onclick = stakeMatch;
+    document.getElementById("submitResult").onclick = submitResult;
+  </script>
+</body>
+</html>
