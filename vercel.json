@@ -1,0 +1,40 @@
+{
+  "version": 2,
+  "name": "trix-naval-battle",
+  "builds": [
+    {
+      "src": "backend/app.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "game/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/socket.io/(.*)",
+      "dest": "/backend/app.js"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/backend/app.js"
+    },
+    {
+      "src": "/(.*\\.(js|css|html|png|jpg|ico))",
+      "dest": "/game/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/game/index.html"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "functions": {
+    "backend/app.js": {
+      "includeFiles": "game/**"
+    }
+  }
+}

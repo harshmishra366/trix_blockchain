@@ -1,16 +1,20 @@
 {
-  "name": "trix",
+  "name": "trix-naval-battle",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "Blockchain battleship game with real-time multiplayer and token staking",
+  "main": "backend/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node backend/app.js",
-    "dev": "nodemon backend/app.js"
+    "dev": "nodemon backend/app.js",
+    "blockchain": "npx hardhat node",
+    "deploy": "npx hardhat run scripts/deploy.js --network localhost",
+    "test": "npx hardhat test",
+    "build": "echo 'No build step required for this project'",
+    "vercel-build": "echo 'Static files ready for deployment'"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "keywords": ["blockchain", "battleship", "game", "ethereum", "multiplayer", "web3", "dapp"],
+  "author": "Harsh Mishra",
+  "license": "MIT",
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "^3.1.0",
     "dotenv": "^17.2.1",
