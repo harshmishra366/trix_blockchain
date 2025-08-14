@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>⚓ Crypto Naval Battle - Blockchain Battleships</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      margin: 0; 
+      padding: 15px; 
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
+      color: white;
+      min-height: 100vh;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .header { text-align: center; margin-bottom: 25px; }
+    .header h1 { font-size: 2.5em; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+    .wallet-section { 
+      background: rgba(255,255,255,0.1); 
+      padding: 20px; 
+      border-radius: 10px; 
+      margin-bottom: 20px;
+      backdrop-filter: blur(10px);
+    }
+    .game-section { 
+      background: rgba(255,255,255,0.1); 
+      padding: 20px; 
+      border-radius: 10px; 
+      margin-bottom: 20px; 
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    
+    /* Battleship Grid Styles */
+    .battle-area { 
+      display: flex; 
+      justify-content: space-around; 
+      flex-wrap: wrap; 
+      margin: 20px 0; 
+    }
+    .grid-container { 
+      margin: 10px;
+      text-align: center;
+    }
+    .grid-title { 
+      font-size: 1.2em; 
+      margin-bottom: 10px; 
+      font-weight: bold;
+    }
+    .battle-grid { 
+      display: grid; 
+      grid-template-columns: repeat(5, 40px); 
+      grid-gap: 2px; 
+      margin: 10px auto; 
+      border: 3px solid #4a90e2;
+      padding: 10px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+    }
+    .grid-cell { 
+      width: 40px; 
+      height: 40px; 
+      background: #87ceeb; 
+      border: 1px solid #4682b4; 
+      cursor: pointer; 
+      font-size: 18px; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+    .grid-cell:hover { 
+      background: #add8e6; 
+      transform: scale(1.1);
+    }
+    .grid-cell.ship { background: #666; color: white; }
+    .grid-cell.hit { background: #ff4444; color: white; }
+    .grid-cell.miss { background: #333; color: #ccc; }
+    .grid-cell.sunk { background: #800000; color: white; animation: sink 0.5s; }
+    .grid-cell:disabled { cursor: not-allowed; }
+    
+    @keyframes sink {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); background: #ff0000; }
+      100% { transform: scale(1); }
+    }
+    
+    /* Ship Placement UI */
+    .ship-placement { 
+      background: rgba(255,255,255,0.2); 
+      padding: 20px; 
+      border-radius: 10px; 
+      margin: 20px 0;
+    }
+    .ship-selector { 
+      display: flex; 
+      justify-content: center; 
+      margin: 15px 0; 
+      flex-wrap: wrap;
+    }
+    .ship-button { 
+      background: #4CAF50; 
+      color: white; 
+      border: none; 
+      padding: 10px 15px; 
+      margin: 5px; 
+      border-radius: 5px; 
+      cursor: pointer; 
+      font-size: 14px;
+    }
+    .ship-button.selected { background: #ff9800; }
+    .ship-button:disabled { background: #666; cursor: not-allowed; }
+    
+    /* General Styles */
+    button { 
+      background: #4CAF50; 
+      color: white; 
+      border: none; 
+      padding: 12px 24px; 
+      margin: 5px; 
+      border-radius: 5px; 
+      cursor: pointer; 
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+    button:hover { background: #45a049; }
+    button:disabled { background: #666; cursor: not-allowed; }
+    .btn-danger { background: #f44336; }
+    .btn-danger:hover { background: #da190b; }
+    .btn-secondary { background: #6c757d; }
+    .btn-secondary:hover { background: #5a6268; }
+    
+    .status { 
+      background: rgba(255,255,255,0.2); 
+      padding: 15px; 
+      border-radius: 5px; 
+      margin: 10px 0; 
+      font-weight: bold;
+    }
+    .player-info { 
+      display: flex; 
+      justify-content: space-between; 
+      margin-bottom: 20px; 
+      flex-wrap: wrap;
+    }
+    .player-card { 
+      background: rgba(255,255,255,0.2); 
+      padding: 15px; 
+      border-radius: 5px; 
+      flex: 1; 
+      margin: 5px; 
+      min-width: 250px;
+    }
+    #events { 
+      background: rgba(0,0,0,0.4); 
+      padding: 15px; 
+      height: 120px; 
+      overflow-y: auto; 
+      border-radius: 5px; 
+      font-family: 'Courier New', monospace; 
+      font-size: 12px;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+    .hidden { display: none; }
+    .modal { 
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      background: rgba(0,0,0,0.8); 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      z-index: 1000;
+    }
+    .modal-content { 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+      color: white; 
+      padding: 40px; 
+      border-radius: 15px; 
+      text-align: center; 
+      max-width: 500px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .battle-area { flex-direction: column; }
+      .player-info { flex-direction: column; }
+      .container { padding: 10px; }
+      .battle-grid { grid-template-columns: repeat(5, 35px); }
+      .grid-cell { width: 35px; height: 35px; font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>⚓ Crypto Naval Battle</h1>
+      <p>Strategic blockchain battleships - Stake GT tokens and sink enemy fleets!</p>
+    </div>
+
+    <!-- Wallet Connection Section -->
+    <div class="wallet-section">
+      <h3>💰 Admiral's Wallet</h3>
+      <button id="connectWallet">Connect MetaMask</button>
+      <div id="walletInfo" class="hidden">
+        <p><strong>Admiral:</strong> <span id="userAddress"></span> <button id="switchAccount" class="btn-secondary" style="padding: 5px 10px; font-size: 12px;">🔄 Switch Account</button></p>
+        <p><strong>GT Balance:</strong> <span id="gtBalance">0</span> GT</p>
+        <p><strong>USDT Balance:</strong> <span id="usdtBalance">0</span> USDT</p>
+        
+        <div style="margin-top: 15px;">
+          <h4>⛽ Fuel Your Fleet (Buy GT)</h4>
+          <button id="getTestUSDT" class="btn-secondary" style="margin-bottom: 10px;">💰 Get 1000 Test USDT</button>
+          <br>
+          <input type="number" id="usdtAmount" placeholder="USDT amount" min="1" style="padding: 8px; border-radius: 4px; border: none;">
+          <button id="buyGT">Buy GT Tokens (1:1)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Section -->
+    <div class="game-section">
+      <h3>� Battle Arena</h3>
+      <div id="gameStatus" class="status">Connect your wallet to begin naval operations</div>
+      
+      <!-- Matchmaking -->
+      <div id="matchmakingSection" class="hidden">
+        <h4>🔍 Find Naval Battle</h4>
+        <p>Enter the GT amount you want to stake. You'll be matched with an opponent with the same stake.</p>
+        <input type="number" id="stakeAmount" placeholder="GT stake amount" min="1" style="padding: 8px; border-radius: 4px; border: none; margin: 10px;">
+        <br>
+        <button id="findMatch">⚔️ Find Battle</button>
+      </div>
+
+      <!-- Waiting for opponent -->
+      <div id="waitingSection" class="hidden">
+        <div class="status">
+          <p>🔍 Scanning seas for worthy opponent...</p>
+          <p>Stake: <span id="currentStake">0</span> GT</p>
+        </div>
+        <button id="cancelSearch" class="btn-danger">Cancel Search</button>
+      </div>
+
+      <!-- Ship Placement Phase -->
+      <div id="placementPhase" class="hidden">
+        <h4>🚢 Deploy Your Fleet</h4>
+        <div class="status" id="placementStatus">Place your ships on the grid. Click to place, click again to rotate.</div>
+        
+        <div class="ship-placement">
+          <div class="ship-selector">
+            <button class="ship-button" data-ship="destroyer" data-size="2">🛥️ Destroyer (2)</button>
+            <button class="ship-button" data-ship="cruiser" data-size="2">⛵ Cruiser (2)</button>
+            <button class="ship-button" data-ship="battleship" data-size="3">🚢 Battleship (3)</button>
+          </div>
+          
+          <div class="grid-container">
+            <div class="grid-title">Your Fleet Deployment</div>
+            <div id="playerGrid" class="battle-grid">
+              <!-- 5x5 grid generated by JS -->
+            </div>
+          </div>
+          
+          <button id="randomizeShips" class="btn-secondary">🎲 Random Deployment</button>
+          <button id="confirmPlacement" class="hidden">✅ Confirm Fleet Position</button>
+          <button id="resetShips" class="btn-danger">🔄 Reset</button>
+        </div>
+      </div>
+
+      <!-- Battle Phase -->
+      <div id="battlePhase" class="hidden">
+        <div class="player-info">
+          <div class="player-card">
+            <h4>🏴‍☠️ Admiral <span id="player1Name">Player 1</span></h4>
+            <p><span id="player1Address">Waiting...</span></p>
+            <p>⚡ Stake: <span id="player1Stake">0</span> GT</p>
+            <p>🎯 Hits: <span id="player1Hits">0</span> | 💥 Ships Sunk: <span id="player1Sunk">0</span>/3</p>
+          </div>
+          <div class="player-card">
+            <h4>🏴‍☠️ Admiral <span id="player2Name">Player 2</span></h4>
+            <p><span id="player2Address">Waiting...</span></p>
+            <p>⚡ Stake: <span id="player2Stake">0</span> GT</p>
+            <p>🎯 Hits: <span id="player2Hits">0</span> | 💥 Ships Sunk: <span id="player2Sunk">0</span>/3</p>
+          </div>
+        </div>
+
+        <div class="battle-area">
+          <div class="grid-container">
+            <div class="grid-title">🛡️ Your Fleet</div>
+            <div id="ownFleetGrid" class="battle-grid">
+              <!-- Player's own ships -->
+            </div>
+          </div>
+          
+          <div class="grid-container">
+            <div class="grid-title">🎯 Enemy Waters</div>
+            <div id="enemyGrid" class="battle-grid">
+              <!-- Enemy grid for attacking -->
+            </div>
+          </div>
+        </div>
+
+        <div id="battleStatus" class="status">Waiting for battle to commence...</div>
+        <button id="leaveGame" class="btn-danger hidden">🏃‍♂️ Abandon Ship</button>
+      </div>
+    </div>
+
+    <!-- Event Log -->
+    <div class="wallet-section">
+      <h3>📜 Battle Log</h3>
+      <div id="events"></div>
+    </div>
+  </div>
+
+  <!-- Game Result Modal -->
+  <div id="gameResultModal" class="modal hidden">
+    <div class="modal-content">
+      <h2 id="resultTitle">⚔️ Battle Complete!</h2>
+      <div id="resultContent">
+        <p id="resultText"></p>
+        <p id="rewardText"></p>
+        <p id="txHashText"></p>
+      </div>
+      <button id="playAgain">🔄 New Battle</button>
+      <button id="backToLobby" class="btn-secondary">🏠 Return to Harbor</button>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.6.9/dist/ethers.umd.min.js"></script>
+  <script src="battleship.js"></script>
+</body>
+</html>

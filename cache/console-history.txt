@@ -1,3 +1,123 @@
+const targetSigner = await ethers.getSigner(targetAccount);
+await network.provider.request({method: "hardhat_impersonateAccount", params: [targetAccount]});
+console.log("Target USDT balance:", ethers.formatUnits(targetUSDTBalance, 6));
+console.log("Target USDT balance:", ethers.formatUnits
+const targetUSDTBalance = await usdt.balanceOf(targetAccount);
+console.log("✅ Transferred 1000 USDT to target account");
+await usdt.transfer(targetAccount, transferAmount);
+const transferAmount = ethers.parseUnits("1000", 6);
+console.log("Owner USDT balance:", ethers.formatUnits(ownerUSDTBalance, 6));
+const ownerUSDTBalance = await usdt.balanceOf(owner.address);
+console.log("Owner address:", owner.address);
+const [owner] = await ethers.getSigners();
+console.log("USDT functions:", usdtInterface.fragments.filter(f => f.type === 'function').map(f => f.name));
+const usdtInterface = await usdt.interface;
+await usdt.mint(targetAccount, ethers.parseUnits("1000", 6));
+const targetAccount = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8";
+const tokenStore = await ethers.getContractAt("TokenStore", "0x0165878A594ca255338adfa4d48449f69242Eb8F");
+const gameToken = await ethers.getContractAt("GameToken", "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707");
+const usdt = await ethers.getContractAt("MockUSDT", "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9");
+const GameToken = await ethers.getContractFactory("GameToken");
+const MockUSDT = await ethers.getContractFactory("MockUSDT");
+await usdt.mint(targetAccount, ethers.parseUnits("1000", 6));
+await usdtconsole.log("✅ Minted 1000 USDT to", targetAccount.slice(0,6) + "...");
+// Mint 1000 USDT to the target account
+const targetAccount = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8";
+console.log("Current Signer GT Balance:", ethers.formatUnits(gtBalanceSigner, 18));
+console.log("Current Signer USDT Balance:", ethers.formatUnits(usdtBalanceSigner, 6));
+const gtBalanceSigner = await gameToken.balanceOf(defaultSigner.address);
+const usdtBalanceSigner = await usdt.balanceOf(defaultSigner.address);
+console.log("Target Account GT Balance:", ethers.formatUnits(gtBalanceTarget, 18));
+console.log("Target Account USDT Balance:", ethers.formatUnits(usdtBalanceTarget, 6));
+const gtBalanceTarget = await gameToken.balanceOf(yourAccount);
+const usdtBalanceTarget = await usdt.balanceOf(yourAccount);
+console.log("Target account:", yourAccount);
+console.log("Current signer:", defaultSigner.address);
+const [defaultSigner] = await ethers.getSigners();
+console.log("GT Balance:", ethers.formatUnits(gtBalance, 18));
+console.log("USDT Balance:", ethers.formatUnits(usdtBalance, 6));
+console.log("USDT Balance:", ethers.formatUnits(usdtBalance, 6)console.log("GT Balance:", ethers.formatUnits(gtBalance, 18));
+const gtBalance = await gameToken.balanceOf(yourAccount);
+const usdtBalance = await usdt.balanceOf(yourAccount);
+// Check final balances
+console.log("✅ Bought GT tokens!");
+await tokenStore2.buy(approveAmount);
+console.log("✅ Approved USDT spending");
+await usdt.approve("0x0165878A594ca255338adfa4d48449f69242Eb8F", approveAmount);
+);
+)
+await usdt.approve("0x0165878A594ca255338adfa4d48449f
+const approveAmount = ethers.parseUnits("100", 6);
+// First approve TokenStore to spend our USDT
+const tokenStore2 = await ethers.getContractAt("TokenStore", "0x0165878A594ca255338adfa4d48449f69242Eb8F");
+const tokenStore = await ethers.getContractAt("TokenStore", "0x0165878A594ca255338adfa4d48449f69242Eb8F");
+const tokenStore = TokenStore.attach("0x0165878A594ca255338adfa4d48449f69242Eb8F");
+const TokenStore = await ethers.getContractFactory
+await gameToken.mint(yourAccount, ethers.parseUnits("500", 18));
+console.log("✅ Minted 1000 USDT");
+const yourAccount = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8";
+const gameToken = GameToken.attach("0x5FC8d32690cc91D4c39d9d3abcBD16989F875707");
+const usdt = MockUSDT.attach("0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9");
+const GameToken = await ethers.getContractFactory("GameToken");
+const MockUSDT = await ethers.getContractFactory("MockUSDT");
+const usdt = MockUSDT.attach("0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9");
+const GameToken = await ethers.getContractFactory("GameToken");
+const MockUSDT = await ethers.getContractFactory("MockUSDT");
+const usdt = MockUSDT.attach("0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9");
+atUnits(usdtBalance, 6));
+console.log("USDT Balance:", ethers.form
+const gtBalance = await gameToken.balanceOf(yourAccount);
+const usdtBalance = await usdt.balanceOf(yourAccount);
+// Check balances
+console.log
+await gameToken.mint(yourAccount, ethers.parseUnits("500", 18));
+// Mint GT tokens  
+console.log("✅ Minted 1000 USDT");
+await usdt.mint(yourAccount, ethers.parseUnits("1000", 6));
+// Mint USDT
+const gameToken = GameToken.attach("0x
+const usdt = MockUSDT.attach("0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9");
+// Get contracts with NEW addresses
+console.log("USDT Balance:", ethers.formatUnits(usdtBalance, 6));
+const gtBalance = await gameToken.balanceOf(yourAccount);
+const usdtBalance = await usdt.balanceOf(yourAccount);
+// Check balances
+console.log("✅ Minted 500 GT tokens");
+await gameToken.mint(yourAccount, ethers.parseUnits("500", 18));
+// Mint GT tokens  
+console.log("✅ Minted 1000 USDT");
+await usdt.mint(yourAccount, ethers.parseUnits("1000", 6));
+// Mint USDT
+const usdt = MockUSDT.attach("0xDc64a140Aa3E981100a9becA4E685f96const gameToken = GameToken.attach("0x5FC8d32690cc91D4c39d9d3abcBD16989F875707");
+// Get contracts with NEW addresses
+console.log("GameToken contract exists:", code2 !== "0x");
+console.log("USDT contract exists:", code1 !== "0x");
+const code1 = await ethers.provider.getCode("0x5FbDB2315678afecb367f032d93F642f64180aa3");
+console.log("USDT contract exists:", code1 !== "0x");
+const code2 = await ethers.provider.getCode("0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512");
+const { ethers } = require("hardhat");
+const gtBalance = await gameToken.balanceOf(yourAccount);
+// Check GT balance
+console.log("✅ Minted 500 GT tokens");
+await gameToken.mint(yourAccount, ethers.utils.parseUnits("500", 18));
+// Try to mint GT tokens directly (if allowed)
+console.log("USDT Balance:", ethers.utils.formatUnits(usdtBalance, 6));
+const usdtBalance = await usdt.balanceOf(yourAccount);
+// Check USDT balance
+console.log("✅ Minted 1000 USDT");
+await usdt.mint(yourAccount, ethers.utils.parseUnits("1000", 6));
+// Mint 1000 USDT to your account
+const yourAccount = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"; // Account #1
+// Get your account (the one you're using in browser)
+const tokenStore = TokenStore.attach("0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0");
+const gameToken = GameToken.attach("0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512");
+const usdt = MockUSDT.attach("0x5FbDB2315678afecb367f032d93F642f64180aa3");
+// Connect to deployed contracts
+const TokenStore = await ethers.getContractFactory("TokenStore");
+const GameToken = await ethers.getContractFactory("GameToken");
+const MockUSDT = await ethers.getContractFactory("MockUSDT");
+const [owner] = await ethers.getSigners();
+// First, get the contracts
   ethers.);
   account3.address,
 await usdt.transfer(

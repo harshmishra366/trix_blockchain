@@ -22,6 +22,9 @@
     "@openzeppelin/contracts": "^5.4.0",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2",
+    "uuid": "^10.0.0"
   }
 }

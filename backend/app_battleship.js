@@ -1,4 +1,4 @@
-require("dotenv").config({ path: require('path').join(__dirname, '..', '.env') });
+require("dotenv").config({ path: '../.env' });
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -142,19 +142,7 @@ io.on('connection', (socket) => {
   // Handle matchmaking for naval battles
   socket.on('findMatch', async (data) => {
     const { stake, address } = data;
-    let playerAddress = address;
-    
-    // Handle if address is a Promise
-    if (typeof address === 'object' && typeof address.then === 'function') {
-      playerAddress = await address;
-    }
-    
-    // Ensure it's a string
-    if (typeof playerAddress !== 'string') {
-      console.error('Invalid player address:', playerAddress);
-      socket.emit('error', { message: 'Invalid wallet address' });
-      return;
-    }
+    const playerAddress = await address; // Resolve promise
     
     console.log(`🔍 Admiral ${playerAddress.slice(0,6)}... seeking battle with ${stake} GT stake`);
     
